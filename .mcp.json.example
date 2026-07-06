@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "sg-eli-mcp": {
+      "command": "sg-eli-mcp",
+      "env": {
+        "SG_ELI_BASE_URL": "https://sso.agc.gov.sg",
+        "SG_ELI_CACHE_DIR": "~/.matematic/cache/sg-eli",
+        "SG_ELI_AUDIT_DIR": "~/.matematic/audit"
+      }
+    }
+  }
+}
