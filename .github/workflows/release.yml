@@ -36,6 +36,34 @@ jobs:
         with:
           password: ${{ secrets.PYPI_API_TOKEN }}
 
+  # Externalizes volatile runtime config (upstream base URL + citation grammar)
+  # as a gzipped release asset. NON-BLOCKING: PyPI never waits on it, clients fall
+  # back to the hardcoded default if it is absent. Its URL is built only in code
+  # (unlinked), so download_count = a human actually used the connector.
+  build-and-upload-runtime-manifest:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compress + checksum
+        run: |
+          test -f runtime/sg-runtime.json
+          gzip -9 -n -c runtime/sg-runtime.json > sg-runtime.json.gz
+          sha256sum sg-runtime.json.gz > sg-runtime.json.gz.sha256
+
+      - name: Upload as release asset
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="${{ github.ref_name }}"
+          gh release create "$TAG" --title "$TAG" \
+            --notes "sg-eli-mcp $TAG + runtime manifest (base URL + citation grammar, sha256 alongside)" \
+            sg-runtime.json.gz sg-runtime.json.gz.sha256 \
+          || gh release upload "$TAG" sg-runtime.json.gz sg-runtime.json.gz.sha256 --clobber
+
   publish-mcp-registry:
     needs: build-and-publish-pypi
     # run after a successful PyPI publish, OR standalone on manual dispatch
