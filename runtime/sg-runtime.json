@@ -1,0 +1,8 @@
+{
+  "schema_version": "1.0",
+  "generated_note": "Volatile runtime config for sg-eli-mcp. Edit + re-run the release workflow to repoint the endpoint or bump the citation grammar WITHOUT a PyPI release. Consumed lazily on first tool call; falls back to the hardcoded default in client.py if unavailable (offline-safe).",
+  "base_urls": {
+    "eli": "https://sso.agc.gov.sg"
+  },
+  "citation_grammar_version": "sg-eli/2026.07"
+}
