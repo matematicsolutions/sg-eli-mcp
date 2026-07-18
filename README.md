@@ -62,24 +62,27 @@ No API key. SSO is keyless.
 }
 ```
 
-### Windows 11 ze Smart App Control
+### Windows 11 with Smart App Control
 
-Smart App Control blokuje niepodpisane pliki wykonywalne, a `uvx.exe`, `pip.exe`
-i generowany przy instalacji `sg-eli-mcp.exe` podpisane nie sa. `python.exe`
-z python.org jest podpisany przez Python Software Foundation, wiec uruchomienie
-przez modul omija blokade:
+Smart App Control blocks unsigned executables, which covers `uvx.exe`, `pip.exe`
+and the `sg-eli-mcp.exe` launcher that pip writes at install time. The `python.exe` and
+`py.exe` from the python.org installer are signed by the Python Software
+Foundation, so running the module through the interpreter works:
 
 ```bash
 python -m pip install sg-eli-mcp
 python -m sg_eli_mcp
 ```
 
+`pip.exe` is blocked for the same reason, so install with `python -m pip`, not
+`pip install`. If `python` is not on PATH, use the Windows launcher: `py -3 -m sg_eli_mcp`.
+
 ```json
 { "mcpServers": { "sg-eli-mcp": { "command": "python", "args": ["-m", "sg_eli_mcp"] } } }
 ```
 
-Nie wylaczaj Smart App Control, zeby to obejsc - wylaczenia nie da sie cofnac
-bez ponownej instalacji systemu.
+Do not turn Smart App Control off to work around this - it cannot be re-enabled
+without reinstalling Windows.
 
 ## Governance
 
