@@ -22,6 +22,7 @@ from mcp.types import ToolAnnotations
 from . import html_tree
 from .audit import AuditLogger, hash_input, timer
 from .citations import build_act_summary, extract_provision, parse_browse_page
+from . import runtime
 from .client import DEFAULT_BASE_URL, SsoClient
 from .models import ActListResult, ActSummary, ActText, ProvisionText
 
@@ -81,7 +82,7 @@ mcp: FastMCP = FastMCP(name="sg-eli-mcp", instructions=INSTRUCTIONS)
 
 
 def _base_url() -> str:
-    return os.environ.get("SG_ELI_BASE_URL", DEFAULT_BASE_URL).rstrip("/")
+    return os.environ.get("SG_ELI_BASE_URL", runtime.base_url("eli", DEFAULT_BASE_URL)).rstrip("/")
 
 
 def _audit() -> AuditLogger:
