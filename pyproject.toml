@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "sg-eli-mcp"
-version = "0.3.1"
+version = "0.3.2"
 description = "MCP server for Singapore Statutes Online (sso.agc.gov.sg) — browse, fetch, and cite Singapore legislation by act code."
 readme = "README.md"
 license = { text = "Apache-2.0" }

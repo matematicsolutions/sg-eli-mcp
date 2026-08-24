@@ -218,7 +218,20 @@ async def sg_coverage() -> Coverage:
     Returns:
         ``Coverage`` with families, an as-of note, and a non-empty list of known gaps.
     """
-    return build_coverage()
+    audit = _audit()
+    input_hash = hash_input({})
+
+    with timer() as t:
+        coverage = build_coverage()
+
+    audit.log(
+        tool="sg_coverage",
+        input_hash=input_hash,
+        output_count_or_size=len(coverage.known_gaps),
+        duration_ms=t.duration_ms,
+        status="ok",
+    )
+    return coverage
 
 
 # ---------------------------------------------------------------------------
