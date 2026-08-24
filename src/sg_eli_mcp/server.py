@@ -40,6 +40,7 @@ This MCP server exposes Singapore Statutes Online (SSO, sso.agc.gov.sg), the Att
 
 ## Hard constraints
 
+- **Do not answer past the edge of this corpus** - when a search comes back empty, or the question touches material this connector does not carry, call `sg_coverage` and relay what it says is missing. Absence here is not absence in the law.
 - **No native ELI** - Singapore has not deployed ELI. `eli_uri` is the SSO act URL (`https://sso.agc.gov.sg/Act/{act_code}`), never invented; see `eli_note`.
 - **No keyword search** - `/search` is disallowed by SSO's `robots.txt`; discovery is by browsing (`sg_list_acts`), not by title or keyword query.
 - **Every response has `human_readable_citation` + `source_url`** - cite both to the user.
