@@ -25,6 +25,7 @@ from .citations import build_act_summary, extract_provision, parse_browse_page
 from . import runtime
 from .client import DEFAULT_BASE_URL, SsoClient
 from .models import ActListResult, ActSummary, ActText, ProvisionText
+from .coverage import Coverage, build_coverage
 
 _MAX_FULL_TEXT_CHARS = 300_000
 
@@ -205,6 +206,20 @@ async def sg_get_provision(act_code: str, provision_num: str) -> ProvisionText:
 
 # ---------------------------------------------------------------------------
 # sg_get_full_text
+@mcp.tool(annotations=READ_ONLY)
+async def sg_coverage() -> Coverage:
+    """Declare what this connector covers, how it is sourced, and what it does NOT cover.
+
+    Call this before telling a user that the law "does not contain" something, and whenever
+    a search comes back empty: the absence may be a gap in this connector rather than in the
+    law. Every gap carries a fallback saying where to look instead.
+
+    Returns:
+        ``Coverage`` with families, an as-of note, and a non-empty list of known gaps.
+    """
+    return build_coverage()
+
+
 # ---------------------------------------------------------------------------
 
 

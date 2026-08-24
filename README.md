@@ -27,6 +27,7 @@ adapted for a jurisdiction with no ELI and no public search API.
 | `sg_list_acts` | Browse the current Acts, paginated (no keyword search - see Scope above). |
 | `sg_get_provision` | The text of one numbered section of an Act, by `act_code` and section number. |
 | `sg_get_full_text` | The full text of an Act (truncated at ~300,000 characters). |
+| `sg_coverage` | Declare what this connector covers, when each family was captured, and - explicitly - what it does NOT cover. Every gap carries a fallback. |
 
 Every response carries the contract: `eli_uri` (Singapore has no ELI - this is the durable SSO
 act URL, e.g. `https://sso.agc.gov.sg/Act/CoA1967`, see `eli_note`), `human_readable_citation`
