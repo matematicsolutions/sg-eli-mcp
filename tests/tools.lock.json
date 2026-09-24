@@ -1,0 +1,491 @@
+{
+  "package_version": "0.3.3",
+  "tools": {
+    "sg_coverage": {
+      "descriptor": {
+        "annotations": {
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": true,
+          "readOnlyHint": true
+        },
+        "description": "Declare what this connector covers, how it is sourced, and what it does NOT cover.\n\nCall this before telling a user that the law \"does not contain\" something, and whenever\na search comes back empty: the absence may be a gap in this connector rather than in the\nlaw. Every gap carries a fallback saying where to look instead.\n\nReturns:\n    ``Coverage`` with families, an as-of note, and a non-empty list of known gaps.",
+        "inputSchema": {
+          "additionalProperties": false,
+          "properties": {},
+          "type": "object"
+        },
+        "meta": {
+          "fastmcp": {
+            "tags": []
+          }
+        },
+        "name": "sg_coverage",
+        "outputSchema": {
+          "additionalProperties": true,
+          "description": "What this connector covers, how it is sourced, and what it does not cover.",
+          "properties": {
+            "as_of_note": {
+              "description": "States what the dates mean, and what they do not promise.",
+              "type": "string"
+            },
+            "families": {
+              "items": {
+                "additionalProperties": true,
+                "description": "One data family this connector exposes.",
+                "properties": {
+                  "captured_at": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "default": null,
+                    "description": "Date this family was last captured (ISO). None when queried live."
+                  },
+                  "live": {
+                    "default": true,
+                    "description": "True when queried live instead of from a snapshot.",
+                    "type": "boolean"
+                  },
+                  "name": {
+                    "description": "Data family, e.g. 'Federal legislation'.",
+                    "type": "string"
+                  },
+                  "source": {
+                    "description": "Official source the data comes from.",
+                    "type": "string"
+                  },
+                  "tool": {
+                    "description": "Tool or tools that reach this family.",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "tool",
+                  "source"
+                ],
+                "type": "object"
+              },
+              "type": "array"
+            },
+            "known_gaps": {
+              "description": "Never empty. An empty list would mean 'not checked', not 'no gaps'.",
+              "items": {
+                "additionalProperties": true,
+                "description": "A known, named hole in this connector's coverage - plus the way around it.",
+                "properties": {
+                  "fallback": {
+                    "description": "Where to go instead.",
+                    "type": "string"
+                  },
+                  "family": {
+                    "description": "Which family the gap belongs to.",
+                    "type": "string"
+                  },
+                  "id": {
+                    "description": "Stable gap identifier.",
+                    "type": "string"
+                  },
+                  "missing": {
+                    "description": "What is NOT available through this connector.",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "family",
+                  "missing",
+                  "fallback"
+                ],
+                "type": "object"
+              },
+              "type": "array"
+            },
+            "status": {
+              "default": "ok",
+              "enum": [
+                "ok",
+                "degraded",
+                "failed"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "as_of_note"
+          ],
+          "type": "object"
+        }
+      },
+      "sha256": "0e09becc2c468449cf330248d199be037c1020e398f8f38e66fa0d82dcd4f28d"
+    },
+    "sg_get_full_text": {
+      "descriptor": {
+        "annotations": {
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": true,
+          "readOnlyHint": true
+        },
+        "description": "Fetch the full text of an act. Large acts are truncated.",
+        "inputSchema": {
+          "additionalProperties": false,
+          "properties": {
+            "act_code": {
+              "description": "SSO's short act code, e.g. ``\"CoA1967\"`` (Companies Act 1967).",
+              "type": "string"
+            }
+          },
+          "required": [
+            "act_code"
+          ],
+          "type": "object"
+        },
+        "meta": {
+          "fastmcp": {
+            "tags": []
+          }
+        },
+        "name": "sg_get_full_text",
+        "outputSchema": {
+          "additionalProperties": true,
+          "description": "Result of ``sg_get_full_text`` - the full text of an act, possibly truncated.",
+          "properties": {
+            "act_code": {
+              "type": "string"
+            },
+            "byte_size": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            },
+            "content": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            },
+            "dataset_note": {
+              "default": "Singapore Statutes Online (SSO, sso.agc.gov.sg) is the Attorney-General's Chambers' official portal for Singapore legislation. Singapore has no ELI scheme; eli_uri carries the durable SSO act URL (see eli_note). Discover with sg_list_acts (browse, paginated - SSO's robots.txt disallows /search, so this connector never queries it), then fetch a specific provision or the full text by act_code.",
+              "type": "string"
+            },
+            "eli_note": {
+              "default": "Singapore has not deployed ELI. eli_uri is the durable SSO act URL (https://sso.agc.gov.sg/Act/{act_code}), keyed on SSO's own short act code - never invented.",
+              "type": "string"
+            },
+            "eli_uri": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            },
+            "human_readable_citation": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            },
+            "source_url": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            },
+            "title": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            },
+            "truncated": {
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "act_code"
+          ],
+          "type": "object"
+        }
+      },
+      "sha256": "51863c53944b2bf38665f6f54af7a3044d4febe8abd6610f9c0dedecea610248"
+    },
+    "sg_get_provision": {
+      "descriptor": {
+        "annotations": {
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": true,
+          "readOnlyHint": true
+        },
+        "description": "Fetch the text of one numbered section of an act.",
+        "inputSchema": {
+          "additionalProperties": false,
+          "properties": {
+            "act_code": {
+              "description": "SSO's short act code, e.g. ``\"CoA1967\"`` (Companies Act 1967).",
+              "type": "string"
+            },
+            "provision_num": {
+              "description": "the plain section number, e.g. ``\"1\"``.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "act_code",
+            "provision_num"
+          ],
+          "type": "object"
+        },
+        "meta": {
+          "fastmcp": {
+            "tags": []
+          }
+        },
+        "name": "sg_get_provision",
+        "outputSchema": {
+          "additionalProperties": true,
+          "description": "Result of ``sg_get_provision`` - the text of one numbered section of an act.",
+          "properties": {
+            "act_code": {
+              "type": "string"
+            },
+            "caption": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            },
+            "dataset_note": {
+              "default": "Singapore Statutes Online (SSO, sso.agc.gov.sg) is the Attorney-General's Chambers' official portal for Singapore legislation. Singapore has no ELI scheme; eli_uri carries the durable SSO act URL (see eli_note). Discover with sg_list_acts (browse, paginated - SSO's robots.txt disallows /search, so this connector never queries it), then fetch a specific provision or the full text by act_code.",
+              "type": "string"
+            },
+            "eli_note": {
+              "default": "Singapore has not deployed ELI. eli_uri is the durable SSO act URL (https://sso.agc.gov.sg/Act/{act_code}), keyed on SSO's own short act code - never invented.",
+              "type": "string"
+            },
+            "eli_uri": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            },
+            "human_readable_citation": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            },
+            "provision_num": {
+              "type": "string"
+            },
+            "source_url": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            },
+            "text": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          },
+          "required": [
+            "act_code",
+            "provision_num"
+          ],
+          "type": "object"
+        }
+      },
+      "sha256": "bb39993dae687f445f5bfb9f924366525541e57e959ab894f4278a76b0c0662e"
+    },
+    "sg_list_acts": {
+      "descriptor": {
+        "annotations": {
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": true,
+          "readOnlyHint": true
+        },
+        "description": "Browse Singapore's current Acts (paginated - SSO has no keyword search API).",
+        "inputSchema": {
+          "additionalProperties": false,
+          "properties": {
+            "page_index": {
+              "default": 1,
+              "description": "1-based page number (default 1).",
+              "type": "integer"
+            },
+            "page_size": {
+              "default": 20,
+              "description": "results per page, 1-100 (default 20).",
+              "type": "integer"
+            }
+          },
+          "type": "object"
+        },
+        "meta": {
+          "fastmcp": {
+            "tags": []
+          }
+        },
+        "name": "sg_list_acts",
+        "outputSchema": {
+          "additionalProperties": true,
+          "description": "Result of ``sg_list_acts``.",
+          "properties": {
+            "dataset_note": {
+              "default": "Singapore Statutes Online (SSO, sso.agc.gov.sg) is the Attorney-General's Chambers' official portal for Singapore legislation. Singapore has no ELI scheme; eli_uri carries the durable SSO act URL (see eli_note). Discover with sg_list_acts (browse, paginated - SSO's robots.txt disallows /search, so this connector never queries it), then fetch a specific provision or the full text by act_code.",
+              "type": "string"
+            },
+            "items": {
+              "items": {
+                "additionalProperties": true,
+                "description": "One act as listed by ``sg_list_acts``.",
+                "properties": {
+                  "act_code": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "default": null
+                  },
+                  "eli_note": {
+                    "default": "Singapore has not deployed ELI. eli_uri is the durable SSO act URL (https://sso.agc.gov.sg/Act/{act_code}), keyed on SSO's own short act code - never invented.",
+                    "type": "string"
+                  },
+                  "eli_uri": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "default": null
+                  },
+                  "human_readable_citation": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "default": null
+                  },
+                  "source_url": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "default": null
+                  },
+                  "title": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "default": null
+                  }
+                },
+                "type": "object"
+              },
+              "type": "array"
+            },
+            "page_index": {
+              "type": "integer"
+            },
+            "page_size": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "page_index",
+            "page_size"
+          ],
+          "type": "object"
+        }
+      },
+      "sha256": "c454fd326c7b6403a5fc1a57855071818e4f781cf6265a65c4b33a96af1a74c7"
+    }
+  },
+  "toolset_sha256": "394f7ddcc9bc7dae8a322e8f76050c3e959caa25dfbedb10ff82ace77a2f116a"
+}
