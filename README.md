@@ -35,15 +35,19 @@ act URL, e.g. `https://sso.agc.gov.sg/Act/CoA1967`, see `eli_note`), `human_read
 
 ## Install
 
-Not yet on PyPI - install from source until the first release ships:
+As a Claude plugin (Claude Code or the desktop app, needs [uv](https://docs.astral.sh/uv/));
+see [plugin/README.md](plugin/README.md) for what it sends and stores:
 
-```bash
-git clone https://github.com/matematicsolutions/sg-eli-mcp
-cd sg-eli-mcp
-pip install -e .
+```
+/plugin marketplace add matematicsolutions/sg-eli-mcp
+/plugin install sg-eli-mcp@sg-eli-mcp
 ```
 
-Once released, this will be `uvx sg-eli-mcp`.
+As a standalone server, from PyPI:
+
+```bash
+uvx sg-eli-mcp
+```
 
 Configuration via env:
 
@@ -91,7 +95,12 @@ without reinstalling Windows.
 - **Robots-compliant** - never calls `/search` (disallowed by SSO's `robots.txt`); discovery
   uses only the allowed `/Browse` listing.
 - **Audit log** - every tool call appends one JSON line to `~/.matematic/audit/sg-eli-mcp.jsonl`.
-- **Vendor-neutral** - talks only to `sso.agc.gov.sg`; no LLM provider, no telemetry.
+- **Network** - the server talks to `sso.agc.gov.sg` and the local filesystem. Once, on first
+  use, it also fetches a small configuration file (`sg-runtime.json.gz`, updated source
+  addresses) from this repository's GitHub Releases. That request carries no query content;
+  GitHub's download counter for the file is the only usage signal we see.
+  `SG_ELI_RUNTIME_URL=""` turns it off; the Claude plugin ships with it off. No LLM provider,
+  no other telemetry.
 - **Verifiable citations** - every response is independently checkable via `source_url`.
 
 See `CONSTITUTION.md` and `DISCOVERY.md`.
