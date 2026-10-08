@@ -22,13 +22,9 @@
   ],
   "mcpServers": {
     "sg-eli-mcp": {
-      "command": "uv",
+      "command": "uvx",
       "args": [
-        "run",
-        "--frozen",
-        "--project",
-        "${CLAUDE_PLUGIN_ROOT}/server",
-        "sg-eli-mcp"
+        "sg-eli-mcp==0.3.3"
       ],
       "env": {
         "SG_ELI_RUNTIME_URL": ""
